@@ -11,31 +11,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Debug: list workspace
-        run: |
-          Write-Host "Working directory: $(pwd)"
-          Get-ChildItem -Recurse -Force
+      - uses: actions/checkout@v3
+        name: Checkout code
 
       - name: Restore NuGet packages
+        uses: NuGet/setup-nuget@v1
+        with:
+          nuget-version: latest
+
+      - name: Restore solution
         run: nuget restore NtlmThief.sln
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+      - uses: microsoft/setup-msbuild@v1
+        name: Setup MSBuild
 
-      - name: Build Solution (Release x64)
-        run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
+      - name: Build solution
+        run: msbuild NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      - name: List build output
-        run: Get-ChildItem x64\Release -Recurse -Force
-
-      - name: Upload build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: NtlmThief-Release-x64
-          path: |
-            x64\Release\NtlmThief.exe
-            x64\Release\**\*.dll
-            x64\Release\**\*.pdb
+          path: x64/Release/NtlmThief.exe
