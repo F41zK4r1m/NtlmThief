@@ -15,39 +15,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2) Debug: show the workspace layout so we know exactly where the .sln landed
-      - name: Dump directory tree
-        run: |
-          Write-Host "Current directory: $(pwd)"
-          # Print a tree of files/folders
-          Get-ChildItem -Recurse -Force | Format-List FullName
+      # 2) Debug: list the entire workspace so you see exactly where NtlmThief.sln lives
+      - name: Debug: list workspace
+        run: Get-ChildItem -Recurse -Force
 
-      # 3) Restore NuGet packages (if you have any)
-      #    Adjust the path below to point at wherever your .sln actually is.
-      #    If your sln is in the repo root, use "NtlmThief.sln"
-      #    If it’s nested in a folder called "NtlmThief", use "NtlmThief\NtlmThief.sln"
+      # 3) Restore any NuGet packages referenced by your solution
       - name: Restore NuGet packages
-        run: nuget restore NtlmThief\NtlmThief.sln
+        run: nuget restore NtlmThief.sln
 
-      # 4) Set up MSBuild on the PATH
+      # 4) Set up MSBuild (Visual Studio) on the PATH
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      # 5) Build in Release|x64
-      #    Again, adjust the .sln path if needed.
+      # 5) Build the solution in Release|x64
       - name: Build Solution (Release x64)
-        run: msbuild.exe NtlmThief\NtlmThief.sln /p:Configuration=Release /p:Platform=x64
+        run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      # 6) Show everything in the output folder so we can see the .exe
+      # 6) Debug: list the Release output folder so you can confirm the .exe location
       - name: List build output
-        run: Get-ChildItem NtlmThief\x64\Release -Recurse -Force | Format-List FullName
+        run: Get-ChildItem x64\Release -Recurse -Force
 
-      # 7) Upload the exe + DLLs + PDBs
+      # 7) Upload the compiled .exe, plus any .dlls and .pdbs
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: NtlmThief-Release-x64
           path: |
-            NtlmThief\x64\Release\NtlmThief.exe
-            NtlmThief\x64\Release\**\*.dll
-            NtlmThief\x64\Release\**\*.pdb
+            x64\Release\NtlmThief.exe
+            x64\Release\**\*.dll
+            x64\Release\**\*.pdb
