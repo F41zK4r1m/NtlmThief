@@ -1,0 +1,40 @@
+name: Build NtlmThief (Windows)
+
+# Run this workflow manually or on every push to main
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build with MSBuild on Windows
+    runs-on: windows-latest
+
+    steps:
+      # 1) Check out the repo
+      - name: Checkout NtlmThief
+        uses: actions/checkout@v3
+
+      # 2) (Optional) Restore any NuGet packages if needed
+      - name: Restore NuGet packages
+        run: |
+          nuget restore NtlmThief.sln
+
+      # 3) Set up MSBuild (Visual Studio) on PATH
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+      # 4) Build the solution in Release mode for x64
+      - name: Build Solution (Release x64)
+        run: |
+          msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
+
+      # 5) Upload the compiled EXE as an artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: NtlmThief-Release-x64
+          path: |
+            **\bin\Release\*
+            **\bin\x64\Release\*
