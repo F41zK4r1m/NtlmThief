@@ -11,31 +11,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1) Check out the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2) Debug: list the entire workspace so you see exactly where NtlmThief.sln lives
       - name: Debug: list workspace
-        run: Get-ChildItem -Recurse -Force
+        run: |
+          Write-Host "Working directory: $(pwd)"
+          Get-ChildItem -Recurse -Force
 
-      # 3) Restore any NuGet packages referenced by your solution
       - name: Restore NuGet packages
         run: nuget restore NtlmThief.sln
 
-      # 4) Set up MSBuild (Visual Studio) on the PATH
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      # 5) Build the solution in Release|x64
       - name: Build Solution (Release x64)
         run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      # 6) Debug: list the Release output folder so you can confirm the .exe location
       - name: List build output
         run: Get-ChildItem x64\Release -Recurse -Force
 
-      # 7) Upload the compiled .exe, plus any .dlls and .pdbs
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
