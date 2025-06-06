@@ -2,9 +2,10 @@
 name: Build NtlmThief (Windows)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:    # allows manual triggering in the Actions UI
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -41,6 +42,6 @@ jobs:
         with:
           name: NtlmThief-Release-x64
           path: |
-            NtlmThief/x64/Release/NtlmThief.exe
-            NtlmThief/x64/Release/**/*.dll
-            NtlmThief/x64/Release/**/*.pdb
+            NtlmThief\x64\Release\NtlmThief.exe
+            NtlmThief\x64\Release\**\*.dll
+            NtlmThief\x64\Release\**\*.pdb
