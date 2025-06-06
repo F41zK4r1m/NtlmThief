@@ -1,43 +1,33 @@
-# .github/workflows/build-windows.yml
 name: Build NtlmThief (Windows)
 
+# Trigger on push to main or manual dispatch
 on:
-  workflow_dispatch:    # allows manual triggering in the Actions UI
   push:
     branches:
       - main
+  workflow_dispatch: {}
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      # 1) Check out the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2) (Optional) If your project uses any NuGet packages, restore them.
-      #    For a pure C++ project this step usually has no effect, but it won't hurt.
-      - name: Restore NuGet packages (if needed)
+      - name: Restore NuGet packages
         run: nuget restore NtlmThief\NtlmThief.sln
 
-      # 3) Set up MSBuild (Visual Studio) on the PATH
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      # 4) Build the .sln in exact Release|x64 configuration.
-      #    Note: the “Platform=x64” must exactly match what’s defined under
-      #    GlobalSection(SolutionConfigurationPlatforms) in NtlmThief.sln.
-      - name: Build Solution (Release x64)
+      - name: Build Release x64
         run: msbuild.exe NtlmThief\NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      # 5) (Optional) List every file so you can confirm where the .exe landed.
-      #    This step runs in PowerShell by default.
-      - name: Debug: show all files in workspace
-        run: Get-ChildItem -Recurse -Force -File -ErrorAction Ignore
+      - name: Show files
+        run: Get-ChildItem -Recurse -Force -File
 
-      # 6) Upload the built .exe (and any DLLs/PDBs) under x64\Release\
-      - name: Upload build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: NtlmThief-Release-x64
