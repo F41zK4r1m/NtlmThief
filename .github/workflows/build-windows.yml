@@ -24,7 +24,8 @@ jobs:
         run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
       - name: Debug: list everything (PowerShell)
-        run: Get-ChildItem -Recurse -Name .
+        run: |
+          Get-ChildItem -Recurse -Name .
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
