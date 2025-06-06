@@ -14,22 +14,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Restore NuGet (if needed)
-        run: nuget restore NtlmThief.sln
-
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Build Win32 Release
-        run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=Win32
+      # Build the project file directly in Release|x64
+      - name: Build NtlmThief.vcxproj (Release x64)
+        run: msbuild.exe NtlmThief\NtlmThief.vcxproj /p:Configuration=Release /p:Platform=x64
 
-      - name: Build x64 Release
-        run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
+      # (Optional) List everything so you can confirm where the EXE landed
+      - name: Debug: show workspace files
+        run: Get-ChildItem -Recurse -Force -File -ErrorAction Ignore
 
-      - name: Upload all build artifacts
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NtlmThief-Release
+          name: NtlmThief-Release-x64
           path: |
-            NtlmThief/Release/**         # Win32-Release output
-            NtlmThief/x64/Release/**      # x64-Release output
+            NtlmThief\x64\Release\NtlmThief.exe
+            NtlmThief\x64\Release\**\*.dll
+            NtlmThief\x64\Release\**\*.pdb
