@@ -1,6 +1,5 @@
 name: Build NtlmThief (Windows)
 
-# Run this workflow manually or on every push to main
 on:
   workflow_dispatch:
   push:
@@ -30,9 +29,9 @@ jobs:
         run: |
           msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      # 5) Upload the compiled EXE as an artifact
+      # 5) Upload the compiled EXE as an artifact (now using v4)
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: NtlmThief-Release-x64
           path: |
