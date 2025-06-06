@@ -20,13 +20,16 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Build Solution (Release x64)
+      - name: Build Win32 Release
+        run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=Win32
+
+      - name: Build x64 Release
         run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      - name: Upload build artifacts
+      - name: Upload all build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: NtlmThief-Release
           path: |
-            NtlmThief/Release/**
-            NtlmThief/x64/Release/**
+            NtlmThief/Release/**         # Win32-Release output
+            NtlmThief/x64/Release/**      # x64-Release output
