@@ -1,3 +1,4 @@
+# .github/workflows/build-windows.yml
 name: Build NtlmThief (Windows)
 
 on:
@@ -13,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Restore NuGet packages (if any)
+      - name: Restore NuGet (if needed)
         run: nuget restore NtlmThief.sln
 
       - name: Setup MSBuild
@@ -22,15 +23,14 @@ jobs:
       - name: Build Solution (Release x64)
         run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      # (Optional) Show directory tree so you can see exactly where the .exe landed
-      - name: Debug: show folder layout
+      # (Optional) Show all folders so you can verify exactly where MSBuild put the .exe
+      - name: Debug: list everything
         run: dir /s /b .
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: NtlmThief-Release
-          # Grabs both Win32 and x64 Release outputs
           path: |
             NtlmThief/Release/**
             NtlmThief/x64/Release/**
