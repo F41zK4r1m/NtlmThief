@@ -11,24 +11,20 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Restore NuGet (if needed)
-        run: nuget restore NtlmThief.sln
+      - run: nuget restore NtlmThief.sln
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+      - uses: microsoft/setup-msbuild@v1
 
-      - name: Build Solution (Release x64)
-        run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
+      - run: msbuild.exe NtlmThief.sln /p:Configuration=Release /p:Platform=x64
 
-      # (Optional) Show all folders so you can verify exactly where MSBuild put the .exe
-      - name: Debug: list everything
+      # Debug step explicitly using cmd.exe so that `dir /s /b` works
+      - name: Debug: list everything (cmd)
+        shell: cmd
         run: dir /s /b .
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: NtlmThief-Release
           path: |
